@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_background"
+    android:gravity="center"
+    android:padding="16dp"
+    tools:context=".RegisterActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_marginBottom="40dp"
+            android:src="@drawable/hellomichlogonobackground"
+            > </ImageView>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Username"
+            android:textColorHint="@color/white"
+            android:textSize="20sp"
+            android:background="@drawable/rounded_corner"
+            android:padding="20dp"
+            android:inputType="text"
+
+            android:id="@+id/usernameInputText"> </EditText>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:textColorHint="@color/white"
+            android:textSize="20sp"
+            android:background="@drawable/rounded_corner"
+            android:padding="20dp"
+            android:inputType="textEmailAddress"
+            android:layout_marginTop="20dp"
+            android:id="@+id/emailInputText"> </EditText>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:textColorHint="@color/white"
+            android:textSize="20sp"
+            android:background="@drawable/rounded_corner"
+            android:padding="20dp"
+            android:inputType="textPassword"
+            android:id="@+id/passwordInputText"
+            android:layout_marginTop="20dp"
+            > </EditText>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Confirm Password"
+            android:textColorHint="@color/white"
+            android:textSize="20sp"
+            android:background="@drawable/rounded_corner"
+            android:padding="20dp"
+            android:inputType="textPassword"
+            android:id="@+id/passwordConfirmInputText"
+            android:layout_marginTop="20dp"
+            > </EditText>
+
+        <Button
+            android:id="@+id/registerButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/white"
+            android:onClick="registerUser"
+            android:padding="18dp"
+            android:text="Register"
+            android:textColor="#3B84F1"
+            android:textSize="20sp"> </Button>
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="loginTextClick"
+            android:layout_marginTop="10dp"
+            android:text="@string/register_google"
+            android:textAllCaps="false"
+            android:textColor="#ffffff"
+            android:textSize="21sp"> </TextView>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1013475218996",
+    "project_id": "hellomich-90edd",
+    "storage_bucket": "hellomich-90edd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013475218996:android:aeb517dafaadfe5b3b1c61",
+        "android_client_info": {
+          "package_name": "com.example.hellomich"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmoGogTSfVhxfLHBHTEicoVxS1r12Im1o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
