@@ -60,15 +60,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
         holder.recyclerRowBinding.recyclerViewTextView.setText(username);
         String test = actives.size()+" test";
         boolean isSessioned = false;
+        holder.recyclerRowBinding.recyclerViewTextView.setTextColor(Color.rgb(0,0,0));
 
         for (Session session : actives) {
-            isSessioned = true;
-
-
 
             if(users.get(position).getEmail().matches(session.getSenderEmail())) {
+                isSessioned = true;
                 holder.recyclerRowBinding.recyclerViewButton.setText("Ongoing Session");
                 holder.recyclerRowBinding.recyclerViewButton.setBackgroundColor(Color.rgb(250,25,25));
+                holder.recyclerRowBinding.recyclerViewButton.setTextColor(Color.rgb(250,255,255));
+                holder.recyclerRowBinding.recyclerViewTextView.setTextColor(Color.rgb(255,255,255));
 
 
                 holder.recyclerRowBinding.recyclerViewButton.setOnClickListener(new View.OnClickListener() {
@@ -86,11 +87,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
                     }
                 });
             } else if (users.get(position).getEmail().matches(session.getReceiverEmail())) {
+                isSessioned = true;
                 holder.recyclerRowBinding.recyclerViewButton.setText("Ongoing Session");
                 holder.recyclerRowBinding.recyclerViewButton.setBackgroundColor(Color.rgb(250,25,25));
-
-
-
+                holder.recyclerRowBinding.recyclerViewButton.setTextColor(Color.rgb(250,255,255));
+                holder.recyclerRowBinding.recyclerViewTextView.setTextColor(Color.rgb(255,255,255));
                 holder.recyclerRowBinding.recyclerViewButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -111,12 +112,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
         }
 
         if(!isSessioned) {
+
             holder.recyclerRowBinding.recyclerViewButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(holder.itemView.getContext(),MapsActivity.class);
                     intent.putExtra("isActiveSession",false);
-
                     intent.putExtra("senderEmail",currentUser.getEmail());
                     intent.putExtra("receiverEmail",users.get(position).getEmail());
 

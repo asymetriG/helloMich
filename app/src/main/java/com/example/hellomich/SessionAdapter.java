@@ -52,6 +52,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionH
 
     @Override
     public void onBindViewHolder(@NonNull SessionHolder holder, int position) {
+        holder.binding.recyclerViewSessionButton.setTextColor(Color.rgb(255,255,255));
         Session session = sessions.get(position);
         if(session.getSenderEmail().matches(currentUser.getEmail())) {
             holder.binding.recyclerViewSessionTextView.setText(session.getReceiverEmail());

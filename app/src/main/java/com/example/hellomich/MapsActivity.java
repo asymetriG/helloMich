@@ -233,6 +233,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         Intent intent = getIntent();
         if (intent.getBooleanExtra("showOldSession", false)) {
+            Toast.makeText(MapsActivity.this,"bura girdi",Toast.LENGTH_SHORT).show();
             String acreatedAt = intent.getStringExtra("createdAt");
             String areceiverEmail = intent.getStringExtra("receiverEmail");
             String asenderEmail = intent.getStringExtra("senderEmail");
@@ -240,6 +241,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             double areceiverLong = intent.getDoubleExtra("receiverLong", 0.0);
             double asenderLang = intent.getDoubleExtra("senderLang", 0.0);
             double asenderLong = intent.getDoubleExtra("senderLong", 0.0);
+
+            binding.recieverTextView.setText("Sender : " + areceiverEmail);
+            binding.senderTextView.setText("Receiver : " + asenderEmail);
 
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
