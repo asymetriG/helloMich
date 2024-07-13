@@ -12,22 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hellomich.databinding.RecyclerRowBinding;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.Timestamp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
+
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
 
@@ -35,7 +24,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
     private ArrayList<Session> actives;
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private User currentUser = User.getCurrentUser();
-    private boolean isSenderUser;
 
 
 

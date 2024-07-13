@@ -5,21 +5,16 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hellomich.databinding.RecyclerSessionRowBinding;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.EventListener;
+
 import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 
@@ -28,7 +23,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionH
     private ArrayList<Session> sessions;
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     User currentUser = User.getCurrentUser();
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+
 
     public class SessionHolder extends RecyclerView.ViewHolder {
         RecyclerSessionRowBinding binding;

@@ -10,7 +10,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.hellomich.databinding.ActivityMainPageBinding;
-import com.google.android.material.navigation.NavigationBarView;
+
 
 public class MainPageActivity extends AppCompatActivity {
 
