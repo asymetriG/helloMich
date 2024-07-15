@@ -10,8 +10,13 @@ import android.widget.ImageView;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 import com.example.hellomich.databinding.ActivitySplashBinding;
+
+import java.util.concurrent.TimeUnit;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -23,7 +28,7 @@ public class SplashActivity extends AppCompatActivity {
         binding = ActivitySplashBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-
+        
         ImageView imageView = binding.imageView;
 
         ObjectAnimator rotateAnimator = ObjectAnimator.ofFloat(imageView, "rotation", 0f, 360f);
@@ -40,4 +45,6 @@ public class SplashActivity extends AppCompatActivity {
             }
         },1500);
     }
+
+
 }
