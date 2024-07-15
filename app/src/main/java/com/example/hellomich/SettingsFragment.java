@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.example.hellomich.databinding.FragmentHomeBinding;
 import com.example.hellomich.databinding.FragmentSettingsBinding;
 import com.google.firebase.auth.FirebaseAuth;
@@ -66,8 +67,8 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onUserFetched(User user) {
                 if (user != null) {
-                    binding.usernameEditText.setText(user.getUsername());
-                    binding.profileImageView.setImageURI(user.getProfilePictureUri());
+                    binding.usernameEditText.setText(user.getUsername().replace(user.getId(),""));
+                    Glide.with(view).load(user.getProfilePictureUri()).into(binding.profileImageView);
                 }
 
                 binding.changeProfilePictureButton.setOnClickListener(v -> {
@@ -76,7 +77,7 @@ public class SettingsFragment extends Fragment {
                 });
 
                 binding.saveButton.setOnClickListener(v -> {
-                    String newUsername = binding.usernameEditText.getText().toString();
+                    String newUsername = binding.usernameEditText.getText().toString()+user.getId();
                     if (!TextUtils.isEmpty(newUsername)) {
                         user.setUsername(newUsername);
                         firebaseFirestore.collection("users").document(user.getId())

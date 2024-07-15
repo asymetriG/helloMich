@@ -28,11 +28,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.hellomich.databinding.ActivityMapsBinding;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.protobuf.Value;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -97,26 +99,65 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
 
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-        mMap.addMarker(new MarkerOptions().position(latLng).title(senderEmail + ", " + getCityName(latLng.latitude, latLng.longitude)));
+        User.getCurrentUser(new User.OnUserFetchedListener() {
+            @Override
+            public void onUserFetched(User user) {
+                if(user.getEmail().matches(senderEmail)) {
+                    firebaseFirestore.collection("sessions").document(senderEmail+"-"+receiverEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            Map<String, Object> data = documentSnapshot.getData();
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("senderEmail", senderEmail);
-        data.put("receiverEmail", receiverEmail);
-        data.put("createdAt", FieldValue.serverTimestamp());
-        data.put("isActive", true);
-        data.put("senderLang", location.getLatitude());
-        data.put("receiverLang", 1000.0);
-        data.put("senderLong", location.getLongitude());
-        data.put("receiverLong", 1000.0);
-        String docName = senderEmail + "-" + receiverEmail;
+                            double senderLang = (double) data.get("senderLang");
+                            double senderLong = (double) data.get("senderLong");
 
-        binding.senderTextView.setText("Sender: " + senderEmail);
-        binding.recieverTextView.setText("Receiver: " + receiverEmail);
 
-        firebaseFirestore.collection("sessions").document(docName).set(data).addOnSuccessListener(unused ->
-                Toast.makeText(MapsActivity.this, "Data Setted", Toast.LENGTH_SHORT).show());
+                            LatLng latLng = new LatLng(senderLang, senderLong);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                            mMap.addMarker(new MarkerOptions().position(latLng).title(senderEmail + ", " + getCityName(latLng.latitude, latLng.longitude)));
+
+                            binding.senderTextView.setText(user.getEmail() + " : " + senderLang + " " + (double) senderLong);
+
+
+
+                        }
+                    });
+
+                } else {
+                    firebaseFirestore.collection("sessions").document(senderEmail+"-"+receiverEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                            Map<String,Object> oldData = documentSnapshot.getData();
+                            Map<String,Object> data = new HashMap<>();
+
+                            data.put("senderEmail", senderEmail);
+                            data.put("receiverEmail", receiverEmail);
+                            data.put("createdAt", oldData.get("createdAt"));
+                            data.put("isActive", false);
+                            data.put("senderLang", oldData.get("senderLang"));
+                            data.put("receiverLang", location.getLatitude());
+                            data.put("senderLong", oldData.get("senderLong"));
+                            data.put("receiverLong", location.getLongitude());
+                            String docName = senderEmail + "-" + receiverEmail;
+
+                            binding.senderTextView.setText("Sender: " + senderEmail);
+                            binding.recieverTextView.setText("Receiver: " + receiverEmail);
+
+                            firebaseFirestore.collection("sessions").document(senderEmail+"-"+receiverEmail).set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Toast.makeText(MapsActivity.this,"Session Stopped",Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    });
+
+                }
+            }
+        });
+
+
     }
 
     @SuppressLint("SetTextI18n")

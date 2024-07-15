@@ -22,14 +22,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
-        setContentView(view);
+        //setContentView(view);
 
         User.getCurrentUser(user -> {
             if (user != null) {
-                Toast.makeText(MainActivity.this, "Gekkegerab", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, MainPageActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+            } else {
+                setContentView(view);
             }
         });
     }
