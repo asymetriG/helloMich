@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String NOT_AUTH = "The supplied auth credential is incorrect, malformed or has expired.";
     private ActivityMainBinding binding;
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    private User currentUser = User.getCurrentUser();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,12 +24,14 @@ public class MainActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
-        if (currentUser != null) {
-            firebaseAuth.signOut();
-            //Intent intent = new Intent(MainActivity.this, MainPageActivity.class);
-            //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            //startActivity(intent);
-        }
+        User.getCurrentUser(user -> {
+            if (user != null) {
+                Toast.makeText(MainActivity.this, "Gekkegerab", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, MainPageActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
     }
 
     public void registerTextClick(View view) {
@@ -60,12 +62,17 @@ public class MainActivity extends AppCompatActivity {
                         }
                     })
                     .addOnSuccessListener(authResult -> {
-                        User.setCurrentUser(firebaseAuth.getCurrentUser().getEmail());
-                        Toast.makeText(MainActivity.this, "Logged in as: " + firebaseAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(MainActivity.this, MainPageActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                        finish();
+                        User.setCurrentUser(firebaseAuth.getCurrentUser().getEmail(), user -> {
+                            if (user != null) {
+                                Toast.makeText(MainActivity.this, "Logged in as: " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(MainActivity.this, MainPageActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                Toast.makeText(MainActivity.this, "Failed to fetch user details", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     });
         }
     }

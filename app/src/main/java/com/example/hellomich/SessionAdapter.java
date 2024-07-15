@@ -18,7 +18,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionH
 
     private final ArrayList<Session> sessions;
     private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    private final User currentUser = User.getCurrentUser();
+
 
     public class SessionHolder extends RecyclerView.ViewHolder {
         RecyclerSessionRowBinding binding;
@@ -44,25 +44,31 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionH
     public void onBindViewHolder(@NonNull SessionHolder holder, int position) {
         holder.binding.recyclerViewSessionButton.setTextColor(Color.rgb(255, 255, 255));
         Session session = sessions.get(position);
-        holder.binding.recyclerViewSessionTextView.setText(session.getSenderEmail().matches(currentUser.getEmail()) ?
-                session.getReceiverEmail() : session.getSenderEmail());
+        User.getCurrentUser(new User.OnUserFetchedListener() {
+            @Override
+            public void onUserFetched(User user) {
+                holder.binding.recyclerViewSessionTextView.setText(session.getSenderEmail().matches(user.getEmail()) ?
+                        session.getReceiverEmail() : session.getSenderEmail());
 
-        holder.binding.recyclerViewSessionButton.setOnClickListener(view -> {
-            Intent intent = new Intent(holder.itemView.getContext(), MapsActivity.class);
-            intent.putExtra("showOldSession", true);
-            intent.putExtra("createdAt", session.getCreatedAt().toString());
-            intent.putExtra("receiverEmail", session.getReceiverEmail());
-            intent.putExtra("senderEmail", session.getSenderEmail());
-            intent.putExtra("receiverLang", session.getReceiverLang());
-            intent.putExtra("receiverLong", session.getReceiverLong());
-            intent.putExtra("senderLang", session.getSenderLang());
-            intent.putExtra("senderLong", session.getSenderLong());
+                holder.binding.recyclerViewSessionButton.setOnClickListener(view -> {
+                    Intent intent = new Intent(holder.itemView.getContext(), MapsActivity.class);
+                    intent.putExtra("showOldSession", true);
+                    intent.putExtra("createdAt", session.getCreatedAt().toString());
+                    intent.putExtra("receiverEmail", session.getReceiverEmail());
+                    intent.putExtra("senderEmail", session.getSenderEmail());
+                    intent.putExtra("receiverLang", session.getReceiverLang());
+                    intent.putExtra("receiverLong", session.getReceiverLong());
+                    intent.putExtra("senderLang", session.getSenderLang());
+                    intent.putExtra("senderLong", session.getSenderLong());
 
-            holder.itemView.getContext().startActivity(intent);
+                    holder.itemView.getContext().startActivity(intent);
+                });
+
+                holder.binding.recyclerViewSessionButton.setBackgroundColor(Color.rgb(255, 20, 20));
+                holder.binding.recyclerViewSessionButton.setText("View");
+            }
         });
 
-        holder.binding.recyclerViewSessionButton.setBackgroundColor(Color.rgb(255, 20, 20));
-        holder.binding.recyclerViewSessionButton.setText("View");
     }
 
     @Override

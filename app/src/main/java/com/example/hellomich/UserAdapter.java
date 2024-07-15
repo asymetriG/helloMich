@@ -19,7 +19,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
 
     private final ArrayList<User> users;
     private final ArrayList<Session> actives;
-    private final User currentUser = User.getCurrentUser();
+
 
     public UserAdapter(ArrayList<User> users, ArrayList<Session> actives) {
         this.users = users;
@@ -51,13 +51,19 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
                 holder.recyclerRowBinding.recyclerViewTextView.setTextColor(Color.rgb(255, 255, 255));
 
                 holder.recyclerRowBinding.recyclerViewButton.setOnClickListener(view -> {
-                    Intent intent = new Intent(holder.itemView.getContext(), MapsActivity.class);
-                    intent.putExtra("isActiveSession", true);
-                    intent.putExtra("senderEmail", session.getSenderEmail());
-                    intent.putExtra("receiverEmail", session.getReceiverEmail());
-                    intent.putExtra("againJoin", session.getReceiverEmail().matches(currentUser.getEmail()));
+                    User.getCurrentUser(new User.OnUserFetchedListener() {
+                        @Override
+                        public void onUserFetched(User user) {
+                            Intent intent = new Intent(holder.itemView.getContext(), MapsActivity.class);
+                            intent.putExtra("isActiveSession", true);
+                            intent.putExtra("senderEmail", session.getSenderEmail());
+                            intent.putExtra("receiverEmail", session.getReceiverEmail());
+                            intent.putExtra("againJoin", session.getReceiverEmail().matches(user.getEmail()));
 
-                    holder.itemView.getContext().startActivity(intent);
+                            holder.itemView.getContext().startActivity(intent);
+                        }
+                    });
+
                 });
                 break;
             }
@@ -65,12 +71,18 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
 
         if (!isSessioned) {
             holder.recyclerRowBinding.recyclerViewButton.setOnClickListener(view -> {
-                Intent intent = new Intent(holder.itemView.getContext(), MapsActivity.class);
-                intent.putExtra("isActiveSession", false);
-                intent.putExtra("senderEmail", currentUser.getEmail());
-                intent.putExtra("receiverEmail", users.get(position).getEmail());
+                User.getCurrentUser(new User.OnUserFetchedListener() {
+                    @Override
+                    public void onUserFetched(User user) {
+                        Intent intent = new Intent(holder.itemView.getContext(), MapsActivity.class);
+                        intent.putExtra("isActiveSession", false);
+                        intent.putExtra("senderEmail", user.getEmail());
+                        intent.putExtra("receiverEmail", users.get(position).getEmail());
 
-                holder.itemView.getContext().startActivity(intent);
+                        holder.itemView.getContext().startActivity(intent);
+                    }
+                });
+
             });
         }
     }

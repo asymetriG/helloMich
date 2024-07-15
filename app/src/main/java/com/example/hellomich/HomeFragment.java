@@ -35,7 +35,7 @@ public class HomeFragment extends Fragment {
     private final ArrayList<Session> actives = new ArrayList<>();
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firebaseFirestore;
-    private final User currentUser = User.getCurrentUser();
+
 
     public interface MyCompletionListener {
         void onComplete();
@@ -50,33 +50,36 @@ public class HomeFragment extends Fragment {
     }
 
     public void setActives(final MyCompletionListener listener) {
-        assert currentUser != null;
-        firebaseFirestore.collection("sessions")
-                .where(Filter.or(
-                        Filter.equalTo("senderEmail", currentUser.getEmail()),
-                        Filter.equalTo("receiverEmail", currentUser.getEmail())
-                ))
-                .whereEqualTo("isActive", true).get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot qds : task.getResult()) {
-                            Map<String, Object> data = qds.getData();
-                            String senderEmail = (String) data.get("senderEmail");
-                            String receiverEmail = (String) data.get("receiverEmail");
-                            Timestamp createdAt = (Timestamp) data.get("createdAt");
-                            double senderLang = (double) data.get("senderLang");
-                            double receiverLang = (double) data.get("receiverLang");
-                            double senderLong = (double) data.get("senderLong");
-                            double receiverLong = (double) data.get("receiverLong");
-                            Session session = new Session(senderEmail, receiverEmail, createdAt, true, senderLang, receiverLang, senderLong, receiverLong);
-                            actives.add(session);
-                        }
-                    }
+        User.getCurrentUser(user -> {
 
-                    // Call the listener when setActives is complete
-                    if (listener != null) {
-                        listener.onComplete();
-                    }
-                });
+            firebaseFirestore.collection("sessions")
+                    .where(Filter.or(
+                            Filter.equalTo("senderEmail", user.getEmail()),
+                            Filter.equalTo("receiverEmail", user.getEmail())
+                    ))
+                    .whereEqualTo("isActive", true).get().addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot qds : task.getResult()) {
+                                Map<String, Object> data = qds.getData();
+                                String senderEmail = (String) data.get("senderEmail");
+                                String receiverEmail = (String) data.get("receiverEmail");
+                                Timestamp createdAt = (Timestamp) data.get("createdAt");
+                                double senderLang = (double) data.get("senderLang");
+                                double receiverLang = (double) data.get("receiverLang");
+                                double senderLong = (double) data.get("senderLong");
+                                double receiverLong = (double) data.get("receiverLong");
+                                Session session = new Session(senderEmail, receiverEmail, createdAt, true, senderLang, receiverLang, senderLong, receiverLong);
+                                actives.add(session);
+                            }
+                        }
+
+                        // Call the listener when setActives is complete
+                        if (listener != null) {
+                            listener.onComplete();
+                        }
+                    });
+        });
+
     }
 
     @Override
@@ -94,11 +97,17 @@ public class HomeFragment extends Fragment {
         MyCompletionListener completionListener = () -> {
             completedTasks[0]++;
             if (completedTasks[0] == 2) {
-                userAdapter = new UserAdapter(users, actives);
-                String text = "Welcome, " + currentUser.getEmail();
-                binding.welcomeText.setText(text);
-                binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                binding.recyclerView.setAdapter(userAdapter);
+                User.getCurrentUser(new User.OnUserFetchedListener() {
+                    @Override
+                    public void onUserFetched(User user) {
+                        userAdapter = new UserAdapter(users, actives);
+                        String text = "Welcome, " + user.getEmail();
+                        binding.welcomeText.setText(text);
+                        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        binding.recyclerView.setAdapter(userAdapter);
+                    }
+                });
+
             }
         };
 
@@ -107,33 +116,39 @@ public class HomeFragment extends Fragment {
     }
 
     private void getData(final MyCompletionListener listener) {
-        firebaseFirestore.collection("users")
-                .where(Filter.notEqualTo("email", currentUser.getEmail()))
-                .addSnapshotListener((value, error) -> {
-                    if (error != null) {
-                        Toast.makeText(getContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+        User.getCurrentUser(new User.OnUserFetchedListener() {
+            @Override
+            public void onUserFetched(User user) {
+                firebaseFirestore.collection("users")
+                        .where(Filter.notEqualTo("email", user.getEmail()))
+                        .addSnapshotListener((value, error) -> {
+                            if (error != null) {
+                                Toast.makeText(getContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
 
-                    if (value != null) {
-                        users.clear();
-                        for (DocumentSnapshot ds : value.getDocuments()) {
-                            Map<String, Object> data = ds.getData();
-                            String email = (String) data.get("email");
-                            String username = (String) data.get("username");
-                            String id = (String) data.get("id");
-                            Timestamp registeredDate = (Timestamp) data.get("registeredDate");
-                            //Uri profilePictureUri = Uri.parse((String) ds.get("profilePictureUri"));
-                            User user = new User(id, username, email, registeredDate,null);
-                            users.add(user);
-                        }
-                    }
+                            if (value != null) {
+                                users.clear();
+                                for (DocumentSnapshot ds : value.getDocuments()) {
+                                    Map<String, Object> data = ds.getData();
+                                    String email = (String) data.get("email");
+                                    String username = (String) data.get("username");
+                                    String id = (String) data.get("id");
+                                    Timestamp registeredDate = (Timestamp) data.get("registeredDate");
+                                    Uri profilePictureUri = Uri.parse((String) ds.get("profilePictureUri"));
+                                    User nuser = new User(id, username, email, registeredDate,profilePictureUri);
+                                    users.add(nuser);
+                                }
+                            }
 
-                    // Call the listener when getData is complete
-                    if (listener != null) {
-                        listener.onComplete();
-                    }
-                });
+                            // Call the listener when getData is complete
+                            if (listener != null) {
+                                listener.onComplete();
+                            }
+                        });
+            }
+        });
+
     }
 
     @Override

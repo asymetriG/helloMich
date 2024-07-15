@@ -24,7 +24,7 @@ import java.util.Map;
 public class ProfileFragment extends Fragment {
 
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-    private User currentUser = User.getCurrentUser();
+
     private FragmentProfileBinding binding;
     private SessionAdapter sessionAdapter;
 
@@ -40,27 +40,33 @@ public class ProfileFragment extends Fragment {
     }
 
     private void getData(final MyProfileCompletionListener listener) {
-        firebaseFirestore.collection("oldSessions")
-                .where(Filter.or(Filter.equalTo("senderEmail", currentUser.getEmail()), Filter.equalTo("receiverEmail", currentUser.getEmail())))
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    for (DocumentSnapshot ds : queryDocumentSnapshots.getDocuments()) {
-                        Map<String, Object> data = ds.getData();
-                        Timestamp createdAt = (Timestamp) data.get("createdAt");
-                        boolean isActive = (boolean) data.get("isActive");
-                        String senderEmail = (String) data.get("senderEmail");
-                        String receiverEmail = (String) data.get("receiverEmail");
-                        double receiverLong = (double) data.get("receiverLong");
-                        double receiverLang = (double) data.get("receiverLang");
-                        double senderLong = (double) data.get("senderLong");
-                        double senderLang = (double) data.get("senderLang");
-                        Session session = new Session(senderEmail, receiverEmail, createdAt, isActive, senderLang, receiverLang, senderLong, receiverLong);
-                        sessions.add(session);
-                    }
-                    if (listener != null) {
-                        listener.onComplete();
-                    }
-                });
+        User.getCurrentUser(new User.OnUserFetchedListener() {
+            @Override
+            public void onUserFetched(User user) {
+                firebaseFirestore.collection("oldSessions")
+                        .where(Filter.or(Filter.equalTo("senderEmail", user.getEmail()), Filter.equalTo("receiverEmail", user.getEmail())))
+                        .get()
+                        .addOnSuccessListener(queryDocumentSnapshots -> {
+                            for (DocumentSnapshot ds : queryDocumentSnapshots.getDocuments()) {
+                                Map<String, Object> data = ds.getData();
+                                Timestamp createdAt = (Timestamp) data.get("createdAt");
+                                boolean isActive = (boolean) data.get("isActive");
+                                String senderEmail = (String) data.get("senderEmail");
+                                String receiverEmail = (String) data.get("receiverEmail");
+                                double receiverLong = (double) data.get("receiverLong");
+                                double receiverLang = (double) data.get("receiverLang");
+                                double senderLong = (double) data.get("senderLong");
+                                double senderLang = (double) data.get("senderLang");
+                                Session session = new Session(senderEmail, receiverEmail, createdAt, isActive, senderLang, receiverLang, senderLong, receiverLong);
+                                sessions.add(session);
+                            }
+                            if (listener != null) {
+                                listener.onComplete();
+                            }
+                        });
+            }
+        });
+
     }
 
     @Override
@@ -82,12 +88,18 @@ public class ProfileFragment extends Fragment {
 
                 binding.logoutButton.setOnClickListener(v -> {
                     try {
-                        if (currentUser != null) {
-                            currentUser.logout();
-                            Intent intent = new Intent(getActivity(), MainActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
-                        }
+                        User.getCurrentUser(new User.OnUserFetchedListener() {
+                            @Override
+                            public void onUserFetched(User user) {
+                                if (user != null) {
+                                    user.logout();
+                                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(intent);
+                                }
+                            }
+                        });
+
                     } catch (Exception e) {
                         Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
                     }

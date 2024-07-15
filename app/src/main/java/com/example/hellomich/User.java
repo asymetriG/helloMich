@@ -30,60 +30,66 @@ public class User {
         this.profilePictureUri = profilePictureUri;
     }
 
-    public static User findUser(String email) {
-        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        final String[] email1 = new String[1];
-        final String[] id = new String[1];
-        final Timestamp[] registeredDate = new Timestamp[1];
-        final String[] username = new String[1];
-        final Uri[] profilePictureUri = new Uri[1];
-        ArrayList<User> users = new ArrayList<>();
+    public interface OnUserFetchedListener {
+        void onUserFetched(User user);
+    }
 
+    public static void findUser(String email, OnUserFetchedListener listener) {
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
 
         firebaseFirestore.collection("users").whereEqualTo("email", email).get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         DocumentSnapshot ds = queryDocumentSnapshots.getDocuments().get(0);
-                        email1[0] = (String) ds.get("email");
-                        id[0] = (String) ds.get("id");
-                        registeredDate[0] = (Timestamp) ds.get("registeredDate");
-                        username[0] = (String) ds.get("username");
-                        profilePictureUri[0] = Uri.parse((String) ds.get("profilePictureUri")); // Retrieve profile picture
+                        String id = (String) ds.get("id");
+                        String username = (String) ds.get("username");
+                        String email1 = (String) ds.get("email");
+                        Timestamp registeredDate = (Timestamp) ds.get("registeredDate");
+                        Uri profilePictureUri = Uri.parse((String) ds.get("profilePictureUri"));
 
+                        User user = new User(id, username, email1, registeredDate, profilePictureUri);
+                        listener.onUserFetched(user);
                     } else {
-                        return;
+                        listener.onUserFetched(null); // Handle user not found
                     }
                 })
                 .addOnFailureListener(e -> {
-
+                    // Handle the error
+                    listener.onUserFetched(null);
                 });
-
-        User u1 = new User(id[0], username[0],email, registeredDate[0],profilePictureUri[0]);
-        return u1;
     }
+
+    public static void setCurrentUser(String email, OnUserFetchedListener listener) {
+        findUser(email, user -> {
+            currentUser = user;
+            listener.onUserFetched(user);
+        });
+    }
+
+    public static void getCurrentUser(OnUserFetchedListener listener) {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
+        if (firebaseUser != null) {
+            if (currentUser == null) {
+                setCurrentUser(firebaseUser.getEmail(), listener);
+            } else {
+                listener.onUserFetched(currentUser);
+            }
+        } else {
+            listener.onUserFetched(null);
+        }
+    }
+
+
 
     public void logout() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.signOut();
     }
 
-    public static void setCurrentUser(String email) {
-        currentUser = findUser(email);
-    }
 
-    public static User getCurrentUser() {
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
-        if (firebaseUser != null) {
-            if (currentUser == null) {
-                currentUser = findUser(firebaseUser.getEmail());
-            }
-            return currentUser;
-        } else {
-            return null;
-        }
-    }
 
     // Getters and Setters
     public String getId() {
