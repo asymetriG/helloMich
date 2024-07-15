@@ -1,5 +1,6 @@
 package com.example.hellomich;
 
+import android.net.Uri;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,12 +20,14 @@ public class User {
     private String email;
     private Timestamp registeredDate;
     private static User currentUser;
+    private Uri profilePictureUri;
 
-    public User(String id, String username, String email, Timestamp registeredDate) {
+    public User(String id, String username, String email, Timestamp registeredDate,Uri profilePictureUri) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.registeredDate = registeredDate;
+        this.profilePictureUri = profilePictureUri;
     }
 
     public static User findUser(String email) {
@@ -33,6 +36,7 @@ public class User {
         final String[] id = new String[1];
         final Timestamp[] registeredDate = new Timestamp[1];
         final String[] username = new String[1];
+        final Uri[] profilePictureUri = new Uri[1];
         ArrayList<User> users = new ArrayList<>();
 
 
@@ -44,6 +48,7 @@ public class User {
                         id[0] = (String) ds.get("id");
                         registeredDate[0] = (Timestamp) ds.get("registeredDate");
                         username[0] = (String) ds.get("username");
+                        profilePictureUri[0] = Uri.parse((String) ds.get("profilePictureUri")); // Retrieve profile picture
 
                     } else {
                         return;
@@ -57,7 +62,7 @@ public class User {
                     }
                 });
 
-        User u1 = new User(id[0], username[0],email, registeredDate[0]);
+        User u1 = new User(id[0], username[0],email, registeredDate[0],profilePictureUri[0]);
         return u1;
     }
 
@@ -111,6 +116,14 @@ public class User {
 
     public Timestamp getRegisteredDate() {
         return registeredDate;
+    }
+
+    public Uri getProfilePictureUri() {
+        return profilePictureUri;
+    }
+
+    public void setProfilePictureUri(Uri profilePictureUri) {
+        this.profilePictureUri = profilePictureUri;
     }
 
     public void setRegisteredDate(Timestamp registeredDate) {

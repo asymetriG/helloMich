@@ -43,6 +43,7 @@ public class RegisterActivity extends AppCompatActivity {
         String passwordText = binding.passwordInputText.getText().toString();
         String confirmText = binding.passwordConfirmInputText.getText().toString();
         String usernameText = binding.usernameInputText.getText().toString();
+        String defaultProfilePictureUri = "android.resource://" + getPackageName() + "/" + R.drawable.hellomichlogonobackground; // Replace with your default profile picture resource
 
         if (emailText.isEmpty()) {
             Toast.makeText(this, "Email cannot be empty", Toast.LENGTH_SHORT).show();
@@ -75,8 +76,9 @@ public class RegisterActivity extends AppCompatActivity {
                         user.put("registeredDate", FieldValue.serverTimestamp());
                         user.put("id", authResult.getUser().getUid());
                         user.put("username", usernameText + authResult.getUser().getUid());
+                        user.put("profilePictureUri", defaultProfilePictureUri); // Add default profile picture URI
 
-                        db.collection("users").add(user).addOnSuccessListener(documentReference -> {
+                        db.collection("users").document(firebaseAuth.getCurrentUser().getUid()).set(user).addOnSuccessListener(documentReference -> {
                             if (firebaseAuth.getCurrentUser() != null && firebaseAuth.getCurrentUser().getEmail() != null) {
                                 Toast.makeText(RegisterActivity.this, "Registered as: " + firebaseAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
                                 firebaseAuth.signOut();

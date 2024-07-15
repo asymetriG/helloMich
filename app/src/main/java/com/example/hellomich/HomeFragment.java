@@ -1,5 +1,6 @@
 package com.example.hellomich;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,7 +81,7 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        binding = FragmentHomeBinding.inflate(inflater, container,false);
         return binding.getRoot();
     }
 
@@ -122,7 +123,8 @@ public class HomeFragment extends Fragment {
                             String username = (String) data.get("username");
                             String id = (String) data.get("id");
                             Timestamp registeredDate = (Timestamp) data.get("registeredDate");
-                            User user = new User(id, username, email, registeredDate);
+                            //Uri profilePictureUri = Uri.parse((String) ds.get("profilePictureUri"));
+                            User user = new User(id, username, email, registeredDate,null);
                             users.add(user);
                         }
                     }
