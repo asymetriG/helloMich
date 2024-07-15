@@ -46,9 +46,11 @@ public class HomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
+
     }
 
     public void setActives(final MyCompletionListener listener) {
+        assert currentUser != null;
         firebaseFirestore.collection("sessions")
                 .where(Filter.or(
                         Filter.equalTo("senderEmail", currentUser.getEmail()),
@@ -79,7 +81,7 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        binding = FragmentHomeBinding.inflate(inflater, container,false);
         return binding.getRoot();
     }
 
@@ -121,8 +123,8 @@ public class HomeFragment extends Fragment {
                             String username = (String) data.get("username");
                             String id = (String) data.get("id");
                             Timestamp registeredDate = (Timestamp) data.get("registeredDate");
-                            Uri profilePictureUri = Uri.parse((String) data.get("profilePictureUri"));
-                            User user = new User(id, username, email, registeredDate,profilePictureUri);
+                            //Uri profilePictureUri = Uri.parse((String) ds.get("profilePictureUri"));
+                            User user = new User(id, username, email, registeredDate,null);
                             users.add(user);
                         }
                     }

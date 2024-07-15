@@ -25,9 +25,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(view);
 
         if (currentUser != null) {
-            Intent intent = new Intent(MainActivity.this, MainPageActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            firebaseAuth.signOut();
+            //Intent intent = new Intent(MainActivity.this, MainPageActivity.class);
+            //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            //startActivity(intent);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.example.hellomich;
 
 import android.net.Uri;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -18,10 +19,10 @@ public class User {
     private String username;
     private String email;
     private Timestamp registeredDate;
-    private Uri profilePictureUri; // New field for profile picture
     private static User currentUser;
+    private Uri profilePictureUri;
 
-    public User(String id, String username, String email, Timestamp registeredDate, Uri profilePictureUri) {
+    public User(String id, String username, String email, Timestamp registeredDate,Uri profilePictureUri) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -38,6 +39,7 @@ public class User {
         final Uri[] profilePictureUri = new Uri[1];
         ArrayList<User> users = new ArrayList<>();
 
+
         firebaseFirestore.collection("users").whereEqualTo("email", email).get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
@@ -47,13 +49,21 @@ public class User {
                         registeredDate[0] = (Timestamp) ds.get("registeredDate");
                         username[0] = (String) ds.get("username");
                         profilePictureUri[0] = Uri.parse((String) ds.get("profilePictureUri")); // Retrieve profile picture
+
+                    } else {
+                        return;
                     }
                 })
-                .addOnFailureListener(e -> {
-                    // Handle the error, possibly returning null
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle the error, possibly returning null
+
+                    }
                 });
 
-        return new User(id[0], username[0], email1[0], registeredDate[0], profilePictureUri[0]);
+        User u1 = new User(id[0], username[0],email, registeredDate[0],profilePictureUri[0]);
+        return u1;
     }
 
     public void logout() {
@@ -108,15 +118,15 @@ public class User {
         return registeredDate;
     }
 
-    public void setRegisteredDate(Timestamp registeredDate) {
-        this.registeredDate = registeredDate;
-    }
-
     public Uri getProfilePictureUri() {
         return profilePictureUri;
     }
 
     public void setProfilePictureUri(Uri profilePictureUri) {
         this.profilePictureUri = profilePictureUri;
+    }
+
+    public void setRegisteredDate(Timestamp registeredDate) {
+        this.registeredDate = registeredDate;
     }
 }

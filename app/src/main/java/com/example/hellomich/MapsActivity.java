@@ -1,6 +1,7 @@
 package com.example.hellomich;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -77,18 +78,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return addresses.get(0).getLocality();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("City not found");
         }
         return null;
     }
 
+    @SuppressLint("SetTextI18n")
     private void handleSession() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
             return;
         }
 
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
         if (location == null) {
             return;
         }
@@ -115,13 +119,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, "Data Setted", Toast.LENGTH_SHORT).show());
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
         Intent intent = getIntent();
 
         if (intent.getBooleanExtra("showOldSession", false)) {
-            Toast.makeText(MapsActivity.this, "bura girdi", Toast.LENGTH_SHORT).show();
+
             String acreatedAt = intent.getStringExtra("createdAt");
             String areceiverEmail = intent.getStringExtra("receiverEmail");
             String asenderEmail = intent.getStringExtra("senderEmail");
@@ -133,17 +138,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             binding.recieverTextView.setText("Sender: " + areceiverEmail);
             binding.senderTextView.setText("Receiver: " + asenderEmail);
 
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
+
 
             LatLng latLng1 = new LatLng(asenderLang, asenderLong);
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng1));
             mMap.addMarker(new MarkerOptions().position(latLng1).title(asenderEmail + ", " + getCityName(latLng1.latitude, latLng1.longitude)));
 
+
             LatLng latLng2 = new LatLng(areceiverLang, areceiverLong);
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng2));
             mMap.addMarker(new MarkerOptions().position(latLng2).title(areceiverEmail + ", " + getCityName(latLng2.latitude, latLng2.longitude)));
+
         } else {
             locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
