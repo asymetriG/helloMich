@@ -5,17 +5,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
-
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
-
 import com.google.firebase.firestore.FirebaseFirestore;
 
-
 import java.util.ArrayList;
-
 
 public class User {
     private String id;
@@ -23,43 +19,6 @@ public class User {
     private String email;
     private Timestamp registeredDate;
     private static User currentUser;
-
-
-
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Timestamp getRegisteredDate() {
-        return registeredDate;
-    }
-
-
-
-    public void setRegisteredDate(Timestamp registeredDate) {
-        this.registeredDate = registeredDate;
-    }
 
     public User(String id, String username, String email, Timestamp registeredDate) {
         this.id = id;
@@ -108,27 +67,53 @@ public class User {
     }
 
     public static void setCurrentUser(String email) {
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         currentUser = findUser(email);
     }
 
     public static User getCurrentUser() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
-        if (firebaseUser!=null) {
-            if (currentUser==null) {
+        if (firebaseUser != null) {
+            if (currentUser == null) {
                 currentUser = findUser(firebaseUser.getEmail());
-                return currentUser;
-            } else {
-                return currentUser;
             }
+            return currentUser;
         } else {
             return null;
         }
-
-
     }
 
+    // Getters and Setters
+    public String getId() {
+        return id;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Timestamp getRegisteredDate() {
+        return registeredDate;
+    }
+
+    public void setRegisteredDate(Timestamp registeredDate) {
+        this.registeredDate = registeredDate;
+    }
 }

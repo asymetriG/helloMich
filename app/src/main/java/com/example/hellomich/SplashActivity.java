@@ -8,15 +8,9 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
-import androidx.work.WorkRequest;
 
 import com.example.hellomich.databinding.ActivitySplashBinding;
-
-import java.util.concurrent.TimeUnit;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -28,23 +22,17 @@ public class SplashActivity extends AppCompatActivity {
         binding = ActivitySplashBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        
-        ImageView imageView = binding.imageView;
 
+        ImageView imageView = binding.imageView;
         ObjectAnimator rotateAnimator = ObjectAnimator.ofFloat(imageView, "rotation", 0f, 360f);
-        rotateAnimator.setDuration(2000); // duration in milliseconds
+        rotateAnimator.setDuration(2000);
         rotateAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         rotateAnimator.start();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(SplashActivity.this,MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        },1500);
+        new Handler().postDelayed(() -> {
+            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }, 1500);
     }
-
-
 }

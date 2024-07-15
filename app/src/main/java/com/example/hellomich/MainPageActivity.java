@@ -11,7 +11,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.hellomich.databinding.ActivityMainPageBinding;
 
-
 public class MainPageActivity extends AppCompatActivity {
 
     private ActivityMainPageBinding binding;
@@ -27,17 +26,13 @@ public class MainPageActivity extends AppCompatActivity {
         replaceFragment(new HomeFragment());
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-
-
             if (item == currentItem) {
                 return false;
             }
 
-
             if (currentItem != null) {
                 currentItem.setEnabled(true);
             }
-
 
             item.setEnabled(false);
             currentItem = item;
