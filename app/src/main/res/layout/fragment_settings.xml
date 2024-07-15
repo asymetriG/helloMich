@@ -19,11 +19,12 @@
 
             <ImageView
                 android:id="@+id/profileImageView"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="16dp"
                 android:src="@drawable/baseline_person_24"
+                android:scaleType="centerCrop"
                 android:contentDescription="Photo" />
 
             <Button
@@ -37,7 +38,10 @@
                 android:id="@+id/usernameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/rounded_corner"
+                android:padding="18dp"
                 android:hint="Username"
+                android:textColor="@color/black"
                 android:layout_marginTop="16dp" />
 
             <EditText
@@ -45,6 +49,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="New Password"
+                android:background="@drawable/rounded_corner"
+                android:padding="18dp"
+                android:textColor="@color/black"
                 android:inputType="textPassword"
                 android:layout_marginTop="16dp" />
 
@@ -52,6 +59,9 @@
                 android:id="@+id/confirmPasswordEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:background="@drawable/rounded_corner"
+                android:padding="18dp"
                 android:hint="Confirm Password"
                 android:inputType="textPassword"
                 android:layout_marginTop="16dp" />

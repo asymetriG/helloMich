@@ -66,10 +66,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         registerLauncher();
 
         Intent intent = getIntent();
-        isActiveSession = intent.getBooleanExtra("isActiveSession", false);
         senderEmail = intent.getStringExtra("senderEmail");
         receiverEmail = intent.getStringExtra("receiverEmail");
-        againJoin = intent.getBooleanExtra("againJoin", false);
     }
 
     private String getCityName(double latitude, double longitude) {
@@ -111,7 +109,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             double senderLang = (double) data.get("senderLang");
                             double senderLong = (double) data.get("senderLong");
 
-
+                            binding.senderTextView.setText("Sender: " + senderEmail);
+                            binding.recieverTextView.setText("Receiver: " + receiverEmail);
                             LatLng latLng = new LatLng(senderLang, senderLong);
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
                             mMap.addMarker(new MarkerOptions().position(latLng).title(senderEmail + ", " + getCityName(latLng.latitude, latLng.longitude)));
@@ -143,6 +142,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                             binding.senderTextView.setText("Sender: " + senderEmail);
                             binding.recieverTextView.setText("Receiver: " + receiverEmail);
+
+                            LatLng latLng1 = new LatLng((double) oldData.get("senderLang"),(double) oldData.get("senderLong"));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng1));
+                            mMap.addMarker(new MarkerOptions().position(latLng1).title(senderEmail + ", " + getCityName(latLng1.latitude, latLng1.longitude)));
+
+                            LatLng latLng2 = new LatLng((double) data.get("receiverLang"),(double) oldData.get("receiverLong"));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng2));
+                            mMap.addMarker(new MarkerOptions().position(latLng2).title(senderEmail + ", " + getCityName(latLng2.latitude, latLng2.longitude)));
 
                             firebaseFirestore.collection("sessions").document(senderEmail+"-"+receiverEmail).set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override

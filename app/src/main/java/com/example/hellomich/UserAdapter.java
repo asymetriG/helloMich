@@ -58,7 +58,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
                             intent.putExtra("isActiveSession", true);
                             intent.putExtra("senderEmail", session.getSenderEmail());
                             intent.putExtra("receiverEmail", session.getReceiverEmail());
-                            intent.putExtra("againJoin", session.getReceiverEmail().matches(user.getEmail()));
 
                             holder.itemView.getContext().startActivity(intent);
                         }

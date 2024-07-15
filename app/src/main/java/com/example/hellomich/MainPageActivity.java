@@ -1,6 +1,8 @@
 package com.example.hellomich;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -15,6 +17,7 @@ public class MainPageActivity extends AppCompatActivity {
 
     private ActivityMainPageBinding binding;
     private MenuItem currentItem;
+    private boolean isItemClickAllowed = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +29,7 @@ public class MainPageActivity extends AppCompatActivity {
         replaceFragment(new HomeFragment());
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-            if (item == currentItem) {
+            if (!isItemClickAllowed || item == currentItem) {
                 return false;
             }
 
@@ -44,6 +47,10 @@ public class MainPageActivity extends AppCompatActivity {
             } else if (item.getItemId() == R.id.settings) {
                 replaceFragment(new SettingsFragment());
             }
+
+            isItemClickAllowed = false;
+            new Handler(Looper.getMainLooper()).postDelayed(() -> isItemClickAllowed = true, 500);
+
             return true;
         });
     }

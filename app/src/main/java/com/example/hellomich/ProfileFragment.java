@@ -43,7 +43,8 @@ public class ProfileFragment extends Fragment {
         User.getCurrentUser(new User.OnUserFetchedListener() {
             @Override
             public void onUserFetched(User user) {
-                firebaseFirestore.collection("oldSessions")
+                firebaseFirestore.collection("sessions")
+                        .whereEqualTo("isActive",false)
                         .where(Filter.or(Filter.equalTo("senderEmail", user.getEmail()), Filter.equalTo("receiverEmail", user.getEmail())))
                         .get()
                         .addOnSuccessListener(queryDocumentSnapshots -> {
