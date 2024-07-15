@@ -43,7 +43,7 @@ public class RegisterActivity extends AppCompatActivity {
         String passwordText = binding.passwordInputText.getText().toString();
         String confirmText = binding.passwordConfirmInputText.getText().toString();
         String usernameText = binding.usernameInputText.getText().toString();
-        String defaultProfilePictureUri = "android.resource://" + getPackageName() + "/" + R.drawable.hellomichlogonobackground; // Replace with your default profile picture resource
+        String defaultProfilePictureUri = "android.resource://" + getPackageName() + "/" + R.drawable.baseline_home_24; // Replace with your default profile picture resource
 
         if (emailText.isEmpty()) {
             Toast.makeText(this, "Email cannot be empty", Toast.LENGTH_SHORT).show();

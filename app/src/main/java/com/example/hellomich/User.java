@@ -54,12 +54,8 @@ public class User {
                         return;
                     }
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Handle the error, possibly returning null
+                .addOnFailureListener(e -> {
 
-                    }
                 });
 
         User u1 = new User(id[0], username[0],email, registeredDate[0],profilePictureUri[0]);
