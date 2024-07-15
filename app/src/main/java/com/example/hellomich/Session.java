@@ -7,22 +7,13 @@ import java.util.Map;
 
 public class Session {
     private String senderEmail;
-    private String  receiverEmail;
+    private String receiverEmail;
     private Timestamp createdAt;
     private boolean isActive;
     private double senderLang;
-    private double  receiverLang;
+    private double receiverLang;
     private double senderLong;
-    private double  receiverLong;
-    private String docname;
-
-    public String getSenderEmail() {
-        return senderEmail;
-    }
-
-    public void setSenderEmail(String senderEmail) {
-        this.senderEmail = senderEmail;
-    }
+    private double receiverLong;
 
     public Session(String senderEmail, String receiverEmail, Timestamp createdAt, boolean isActive, double senderLang, double receiverLang, double senderLong, double receiverLong) {
         this.senderEmail = senderEmail;
@@ -33,7 +24,6 @@ public class Session {
         this.receiverLang = receiverLang;
         this.senderLong = senderLong;
         this.receiverLong = receiverLong;
-        this.docname = senderEmail+"-"+receiverEmail;
     }
 
     public Map<String, Object> toHashMap() {
@@ -47,6 +37,15 @@ public class Session {
         map.put("senderLong", senderLong);
         map.put("receiverLong", receiverLong);
         return map;
+    }
+
+    // Getters and Setters
+    public String getSenderEmail() {
+        return senderEmail;
+    }
+
+    public void setSenderEmail(String senderEmail) {
+        this.senderEmail = senderEmail;
     }
 
     public String getReceiverEmail() {

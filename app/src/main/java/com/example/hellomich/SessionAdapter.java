@@ -6,24 +6,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
 import androidx.annotation.NonNull;
-
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hellomich.databinding.RecyclerSessionRowBinding;
 import com.google.firebase.auth.FirebaseAuth;
 
-import com.google.firebase.firestore.FieldValue;
-
 import java.util.ArrayList;
 
 public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionHolder> {
 
-    private ArrayList<Session> sessions;
-    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    User currentUser = User.getCurrentUser();
-
+    private final ArrayList<Session> sessions;
+    private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private final User currentUser = User.getCurrentUser();
 
     public class SessionHolder extends RecyclerView.ViewHolder {
         RecyclerSessionRowBinding binding;
@@ -47,36 +42,27 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionH
 
     @Override
     public void onBindViewHolder(@NonNull SessionHolder holder, int position) {
-        holder.binding.recyclerViewSessionButton.setTextColor(Color.rgb(255,255,255));
+        holder.binding.recyclerViewSessionButton.setTextColor(Color.rgb(255, 255, 255));
         Session session = sessions.get(position);
-        if(session.getSenderEmail().matches(currentUser.getEmail())) {
-            holder.binding.recyclerViewSessionTextView.setText(session.getReceiverEmail());
-        } else {
-            holder.binding.recyclerViewSessionTextView.setText(session.getSenderEmail());
-        }
+        holder.binding.recyclerViewSessionTextView.setText(session.getSenderEmail().matches(currentUser.getEmail()) ?
+                session.getReceiverEmail() : session.getSenderEmail());
 
-        holder.binding.recyclerViewSessionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(holder.itemView.getContext(),MapsActivity.class);
-                intent.putExtra("showOldSession",true);
-                intent.putExtra("createdAt", FieldValue.serverTimestamp().toString());
-                intent.putExtra("receiverEmail",session.getReceiverEmail());
-                intent.putExtra("senderEmail",session.getSenderEmail());
-                intent.putExtra("receiverLang",session.getReceiverLang());
-                intent.putExtra("receiverLong",session.getReceiverLong());
-                intent.putExtra("senderLang",session.getSenderLang());
-                intent.putExtra("senderLong",session.getSenderLong());
+        holder.binding.recyclerViewSessionButton.setOnClickListener(view -> {
+            Intent intent = new Intent(holder.itemView.getContext(), MapsActivity.class);
+            intent.putExtra("showOldSession", true);
+            intent.putExtra("createdAt", session.getCreatedAt().toString());
+            intent.putExtra("receiverEmail", session.getReceiverEmail());
+            intent.putExtra("senderEmail", session.getSenderEmail());
+            intent.putExtra("receiverLang", session.getReceiverLang());
+            intent.putExtra("receiverLong", session.getReceiverLong());
+            intent.putExtra("senderLang", session.getSenderLang());
+            intent.putExtra("senderLong", session.getSenderLong());
 
-                holder.itemView.getContext().startActivity(intent);
-            }
+            holder.itemView.getContext().startActivity(intent);
         });
 
-
-        holder.binding.recyclerViewSessionButton.setBackgroundColor(Color.rgb(255,20,20));
+        holder.binding.recyclerViewSessionButton.setBackgroundColor(Color.rgb(255, 20, 20));
         holder.binding.recyclerViewSessionButton.setText("View");
-
-
     }
 
     @Override
