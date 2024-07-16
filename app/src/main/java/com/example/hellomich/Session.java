@@ -10,18 +10,18 @@ public class Session {
     private String receiverEmail;
     private Timestamp createdAt;
     private boolean isActive;
-    private double senderLang;
-    private double receiverLang;
+    private double senderLat;
+    private double receiverLat;
     private double senderLong;
     private double receiverLong;
 
-    public Session(String senderEmail, String receiverEmail, Timestamp createdAt, boolean isActive, double senderLang, double receiverLang, double senderLong, double receiverLong) {
+    public Session(String senderEmail, String receiverEmail, Timestamp createdAt, boolean isActive, double senderLat, double receiverLat, double senderLong, double receiverLong) {
         this.senderEmail = senderEmail;
         this.receiverEmail = receiverEmail;
         this.createdAt = createdAt;
         this.isActive = isActive;
-        this.senderLang = senderLang;
-        this.receiverLang = receiverLang;
+        this.senderLat = senderLat;
+        this.receiverLat = receiverLat;
         this.senderLong = senderLong;
         this.receiverLong = receiverLong;
     }
@@ -32,8 +32,8 @@ public class Session {
         map.put("receiverEmail", receiverEmail);
         map.put("createdAt", createdAt);
         map.put("isActive", isActive);
-        map.put("senderLang", senderLang);
-        map.put("receiverLang", receiverLang);
+        map.put("senderLat", senderLat);
+        map.put("receiverLat", receiverLat);
         map.put("senderLong", senderLong);
         map.put("receiverLong", receiverLong);
         return map;
@@ -72,20 +72,20 @@ public class Session {
         isActive = active;
     }
 
-    public double getSenderLang() {
-        return senderLang;
+    public double getSenderLat() {
+        return senderLat;
     }
 
-    public void setSenderLang(double senderLang) {
-        this.senderLang = senderLang;
+    public void setSenderLat(double senderLat) {
+        this.senderLat = senderLat;
     }
 
-    public double getReceiverLang() {
-        return receiverLang;
+    public double getreceiverLat() {
+        return receiverLat;
     }
 
-    public void setReceiverLang(double receiverLang) {
-        this.receiverLang = receiverLang;
+    public void setreceiverLat(double receiverLat) {
+        this.receiverLat = receiverLat;
     }
 
     public double getSenderLong() {

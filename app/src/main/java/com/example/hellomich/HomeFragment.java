@@ -64,11 +64,11 @@ public class HomeFragment extends Fragment {
                                 String senderEmail = (String) data.get("senderEmail");
                                 String receiverEmail = (String) data.get("receiverEmail");
                                 Timestamp createdAt = (Timestamp) data.get("createdAt");
-                                double senderLang = (double) data.get("senderLang");
-                                double receiverLang = (double) data.get("receiverLang");
+                                double senderLat = (double) data.get("senderLat");
+                                double receiverLat = (double) data.get("receiverLat");
                                 double senderLong = (double) data.get("senderLong");
                                 double receiverLong = (double) data.get("receiverLong");
-                                Session session = new Session(senderEmail, receiverEmail, createdAt, true, senderLang, receiverLang, senderLong, receiverLong);
+                                Session session = new Session(senderEmail, receiverEmail, createdAt, true, senderLat, receiverLat, senderLong, receiverLong);
                                 actives.add(session);
                             }
                         }

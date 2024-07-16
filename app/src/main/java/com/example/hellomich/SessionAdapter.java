@@ -56,9 +56,9 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionH
                     intent.putExtra("createdAt", session.getCreatedAt().toString());
                     intent.putExtra("receiverEmail", session.getReceiverEmail());
                     intent.putExtra("senderEmail", session.getSenderEmail());
-                    intent.putExtra("receiverLang", session.getReceiverLang());
+                    intent.putExtra("receiverLat", session.getreceiverLat());
                     intent.putExtra("receiverLong", session.getReceiverLong());
-                    intent.putExtra("senderLang", session.getSenderLang());
+                    intent.putExtra("senderLat", session.getSenderLat());
                     intent.putExtra("senderLong", session.getSenderLong());
 
                     holder.itemView.getContext().startActivity(intent);

@@ -14,9 +14,11 @@ HelloMich is an Android application that facilitates user interactions and sessi
 
 ## Screenshots
 
-![Home Screen](screenshots/home.png)
-![Profile Screen](screenshots/profile.png)
-![Settings Screen](screenshots/settings.png)
+![Register Screen](screenshots/register.jpeg)
+![Login Screen](screenshots/login.jpeg)
+![HelloMich Screen](screenshots/helloMichTest.mp4)
+![Profile Screen](screenshots/oldessions.jpeg)
+![Settings Screen](screenshots/settings.jpeg)
 
 ## Installation
 

@@ -111,16 +111,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 Map<String, Object> data = documentSnapshot.getData();
 
-                                double senderLang = (double) data.get("senderLang");
+                                double senderLat = (double) data.get("senderLat");
                                 double senderLong = (double) data.get("senderLong");
 
                                 binding.senderTextView.setText("Sender: " + senderEmail);
                                 binding.recieverTextView.setText("Receiver: " + receiverEmail);
-                                LatLng latLng = new LatLng(senderLang, senderLong);
+                                LatLng latLng = new LatLng(senderLat, senderLong);
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
                                 mMap.addMarker(new MarkerOptions().position(latLng).title(senderEmail + ", " + getCityName(latLng.latitude, latLng.longitude)));
 
-                                binding.senderTextView.setText(user.getEmail() + " : " + senderLang + " " + (double) senderLong);
+                                binding.senderTextView.setText(user.getEmail() + " : " + senderLat + " " + (double) senderLong);
 
 
                             }
@@ -138,8 +138,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         data.put("receiverEmail", receiverEmail);
                         data.put("createdAt", FieldValue.serverTimestamp());
                         data.put("isActive", true);
-                        data.put("senderLang", newLocation.getLatitude());
-                        data.put("receiverLang", 0.0);
+                        data.put("senderLat", newLocation.getLatitude());
+                        data.put("receiverLat", 0.0);
                         data.put("senderLong", newLocation.getLongitude());
                         data.put("receiverLong", 0.0);
                         String docName = senderEmail + "-" + receiverEmail;
@@ -176,8 +176,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             data.put("receiverEmail", receiverEmail);
                             data.put("createdAt", oldData.get("createdAt"));
                             data.put("isActive", false);
-                            data.put("senderLang", oldData.get("senderLang"));
-                            data.put("receiverLang", location.getLatitude());
+                            data.put("senderLat", oldData.get("senderLat"));
+                            data.put("receiverLat", location.getLatitude());
                             data.put("senderLong", oldData.get("senderLong"));
                             data.put("receiverLong", location.getLongitude());
                             String docName = senderEmail + "-" + receiverEmail;
@@ -185,13 +185,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             binding.senderTextView.setText("Sender: " + senderEmail);
                             binding.recieverTextView.setText("Receiver: " + receiverEmail);
 
-                            LatLng latLng1 = new LatLng((double) oldData.get("senderLang"),(double) oldData.get("senderLong"));
+                            LatLng latLng1 = new LatLng((double) oldData.get("senderLat"),(double) oldData.get("senderLong"));
                             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng1));
                             mMap.addMarker(new MarkerOptions().position(latLng1).title(senderEmail + ", " + getCityName(latLng1.latitude, latLng1.longitude)));
 
-                            LatLng latLng2 = new LatLng((double) data.get("receiverLang"),(double) data.get("receiverLong"));
+                            LatLng latLng2 = new LatLng((double) data.get("receiverLat"),(double) data.get("receiverLong"));
                             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng2));
-                            mMap.addMarker(new MarkerOptions().position(latLng2).title(senderEmail + ", " + getCityName(latLng2.latitude, latLng2.longitude)));
+                            mMap.addMarker(new MarkerOptions().position(latLng2).title(receiverEmail + ", " + getCityName(latLng2.latitude, latLng2.longitude)));
 
 
                             firebaseFirestore.collection("sessions").document(senderEmail+"-"+receiverEmail).set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -240,9 +240,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             String acreatedAt = intent.getStringExtra("createdAt");
             String areceiverEmail = intent.getStringExtra("receiverEmail");
             String asenderEmail = intent.getStringExtra("senderEmail");
-            double areceiverLang = intent.getDoubleExtra("receiverLang", 0.0);
+            double areceiverLat = intent.getDoubleExtra("receiverLat", 0.0);
             double areceiverLong = intent.getDoubleExtra("receiverLong", 0.0);
-            double asenderLang = intent.getDoubleExtra("senderLang", 0.0);
+            double asenderLat = intent.getDoubleExtra("senderLat", 0.0);
             double asenderLong = intent.getDoubleExtra("senderLong", 0.0);
 
             binding.recieverTextView.setText("Sender: " + areceiverEmail);
@@ -250,12 +250,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
 
-            LatLng latLng1 = new LatLng(asenderLang, asenderLong);
+            LatLng latLng1 = new LatLng(asenderLat, asenderLong);
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng1));
             mMap.addMarker(new MarkerOptions().position(latLng1).title(asenderEmail + ", " + getCityName(latLng1.latitude, latLng1.longitude)));
 
 
-            LatLng latLng2 = new LatLng(areceiverLang, areceiverLong);
+            LatLng latLng2 = new LatLng(areceiverLat, areceiverLong);
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng2));
             mMap.addMarker(new MarkerOptions().position(latLng2).title(areceiverEmail + ", " + getCityName(latLng2.latitude, latLng2.longitude)));
 

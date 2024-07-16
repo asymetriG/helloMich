@@ -60,10 +60,10 @@ public class ProfileFragment extends Fragment {
                                 String senderEmail = (String) data.get("senderEmail");
                                 String receiverEmail = (String) data.get("receiverEmail");
                                 double receiverLong = (double) data.get("receiverLong");
-                                double receiverLang = (double) data.get("receiverLang");
+                                double receiverLat = (double) data.get("receiverLat");
                                 double senderLong = (double) data.get("senderLong");
-                                double senderLang = (double) data.get("senderLang");
-                                Session session = new Session(senderEmail, receiverEmail, createdAt, isActive, senderLang, receiverLang, senderLong, receiverLong);
+                                double senderLat = (double) data.get("senderLat");
+                                Session session = new Session(senderEmail, receiverEmail, createdAt, isActive, senderLat, receiverLat, senderLong, receiverLong);
                                 sessions.add(session);
                             }
                             if (listener != null) {
