@@ -73,7 +73,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
                 User.getCurrentUser(new User.OnUserFetchedListener() {
                     @Override
                     public void onUserFetched(User user) {
+                        Toast.makeText(holder.itemView.getContext(),"Sıfır Request",Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(holder.itemView.getContext(), MapsActivity.class);
+                        intent.putExtra("newRequest",true);
                         intent.putExtra("isActiveSession", false);
                         intent.putExtra("senderEmail", user.getEmail());
                         intent.putExtra("receiverEmail", users.get(position).getEmail());

@@ -100,27 +100,67 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         User.getCurrentUser(new User.OnUserFetchedListener() {
             @Override
             public void onUserFetched(User user) {
-                if(user.getEmail().matches(senderEmail)) {
-                    firebaseFirestore.collection("sessions").document(senderEmail+"-"+receiverEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            Map<String, Object> data = documentSnapshot.getData();
+                if (user.getEmail().matches(senderEmail)) {
+                    Intent intent = getIntent();
+                    boolean isNewRequest = intent.getBooleanExtra("newRequest", false);
+                    if (!isNewRequest) {
+                        firebaseFirestore.collection("sessions").document(senderEmail + "-" + receiverEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                Map<String, Object> data = documentSnapshot.getData();
 
-                            double senderLang = (double) data.get("senderLang");
-                            double senderLong = (double) data.get("senderLong");
+                                double senderLang = (double) data.get("senderLang");
+                                double senderLong = (double) data.get("senderLong");
 
-                            binding.senderTextView.setText("Sender: " + senderEmail);
-                            binding.recieverTextView.setText("Receiver: " + receiverEmail);
-                            LatLng latLng = new LatLng(senderLang, senderLong);
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                            mMap.addMarker(new MarkerOptions().position(latLng).title(senderEmail + ", " + getCityName(latLng.latitude, latLng.longitude)));
+                                binding.senderTextView.setText("Sender: " + senderEmail);
+                                binding.recieverTextView.setText("Receiver: " + receiverEmail);
+                                LatLng latLng = new LatLng(senderLang, senderLong);
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                                mMap.addMarker(new MarkerOptions().position(latLng).title(senderEmail + ", " + getCityName(latLng.latitude, latLng.longitude)));
 
-                            binding.senderTextView.setText(user.getEmail() + " : " + senderLang + " " + (double) senderLong);
+                                binding.senderTextView.setText(user.getEmail() + " : " + senderLang + " " + (double) senderLong);
 
 
-
+                            }
+                        });
+                    } else {
+                        if (ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            return;
                         }
-                    });
+                        Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+                        Map<String,Object> data = new HashMap<>();
+
+                        data.put("senderEmail", senderEmail);
+                        data.put("receiverEmail", receiverEmail);
+                        data.put("createdAt", FieldValue.serverTimestamp());
+                        data.put("isActive", true);
+                        data.put("senderLang", location.getLatitude());
+                        data.put("receiverLang", 0.0);
+                        data.put("senderLong", location.getLongitude());
+                        data.put("receiverLong", 0.0);
+                        String docName = senderEmail + "-" + receiverEmail;
+
+                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                        mMap.addMarker(new MarkerOptions().position(latLng).title(senderEmail + ", " + getCityName(latLng.latitude, latLng.longitude)));
+
+
+                        binding.senderTextView.setText("Sender: " + senderEmail);
+                        binding.recieverTextView.setText("Receiver: " + receiverEmail);
+
+
+
+                        firebaseFirestore.collection("sessions").document(senderEmail+"-"+receiverEmail).set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Toast.makeText(MapsActivity.this,"Data setted",Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    }
+
+
 
                 } else {
                     firebaseFirestore.collection("sessions").document(senderEmail+"-"+receiverEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -147,7 +187,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng1));
                             mMap.addMarker(new MarkerOptions().position(latLng1).title(senderEmail + ", " + getCityName(latLng1.latitude, latLng1.longitude)));
 
-                            LatLng latLng2 = new LatLng((double) data.get("receiverLang"),(double) oldData.get("receiverLong"));
+                            LatLng latLng2 = new LatLng((double) data.get("receiverLang"),(double) data.get("receiverLong"));
                             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng2));
                             mMap.addMarker(new MarkerOptions().position(latLng2).title(senderEmail + ", " + getCityName(latLng2.latitude, latLng2.longitude)));
 
