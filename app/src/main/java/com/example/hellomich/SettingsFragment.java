@@ -1,7 +1,13 @@
 package com.example.hellomich;
 
+
+import static android.os.Build.VERSION_CODES.TIRAMISU;
+
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -14,10 +20,10 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.example.hellomich.databinding.FragmentHomeBinding;
 import com.example.hellomich.databinding.FragmentSettingsBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,6 +46,17 @@ public class SettingsFragment extends Fragment {
                 if (result.getResultCode() == getActivity().RESULT_OK && result.getData() != null) {
                     imageUri = result.getData().getData();
                     binding.profileImageView.setImageURI(imageUri);
+                }
+            }
+    );
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            isGranted -> {
+                if (isGranted) {
+                    openImagePicker();
+                } else {
+                    Toast.makeText(getContext(), "Permission denied", Toast.LENGTH_SHORT).show();
                 }
             }
     );
@@ -71,13 +88,31 @@ public class SettingsFragment extends Fragment {
                     Glide.with(view).load(user.getProfilePictureUri()).into(binding.profileImageView);
                 }
 
-                binding.changeProfilePictureButton.setOnClickListener(v -> {
-                    Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    pickImageLauncher.launch(pickPhoto);
-                });
+
+                if(Build.VERSION.SDK_INT>TIRAMISU) {
+                    binding.changeProfilePictureButton.setOnClickListener(v -> {
+                        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
+                        } else {
+                            openImagePicker();
+                        }
+                    });
+                } else {
+                    binding.changeProfilePictureButton.setOnClickListener(v -> {
+                        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+                        } else {
+                            openImagePicker();
+                        }
+                    });
+                }
+
+
 
                 binding.saveButton.setOnClickListener(v -> {
-                    String newUsername = binding.usernameEditText.getText().toString()+user.getId();
+                    String newUsername = binding.usernameEditText.getText().toString() + user.getId();
                     if (!TextUtils.isEmpty(newUsername)) {
                         user.setUsername(newUsername);
                         firebaseFirestore.collection("users").document(user.getId())
@@ -114,8 +149,11 @@ public class SettingsFragment extends Fragment {
                 });
             }
         });
+    }
 
-
+    private void openImagePicker() {
+        Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickImageLauncher.launch(pickPhoto);
     }
 
     @Override

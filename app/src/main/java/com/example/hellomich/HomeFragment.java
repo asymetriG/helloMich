@@ -73,7 +73,7 @@ public class HomeFragment extends Fragment {
                             }
                         }
 
-                        // Call the listener when setActives is complete
+                        // Listener Call
                         if (listener != null) {
                             listener.onComplete();
                         }
@@ -135,13 +135,13 @@ public class HomeFragment extends Fragment {
                                     String username = (String) data.get("username");
                                     String id = (String) data.get("id");
                                     Timestamp registeredDate = (Timestamp) data.get("registeredDate");
-                                    Uri profilePictureUri = Uri.parse((String) ds.get("profilePictureUri"));
-                                    User nuser = new User(id, username, email, registeredDate,profilePictureUri);
+                                    //Uri profilePictureUri = Uri.parse((String) ds.get("profilePictureUri"));
+                                    User nuser = new User(id, username, email, registeredDate,null);
                                     users.add(nuser);
                                 }
                             }
 
-                            // Call the listener when getData is complete
+                            // Listener Call
                             if (listener != null) {
                                 listener.onComplete();
                             }
