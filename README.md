@@ -36,8 +36,6 @@ HelloMich is an Android application that facilitates user interactions and sessi
 
 ## Dependencies
 
-Make sure to include the following dependencies in your `build.gradle` (app-level) file:
-
 ```gradle
 dependencies {
     implementation 'com.google.firebase:firebase-auth:21.0.1'
