@@ -1,5 +1,4 @@
-# Creating the README.md file content
-readme_content = """
+
 # HelloMich Android App
 
 HelloMich is an Android application that facilitates user interactions and sessions, including features like user registration, login, profile management, and session tracking using Firebase.
