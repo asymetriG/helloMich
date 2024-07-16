@@ -12,14 +12,6 @@ HelloMich is an Android application that facilitates user interactions and sessi
 - **Session Management**: Users can start, view, and manage sessions.
 - **Firebase Integration**: Authentication, Firestore for data storage, and Firebase Storage for profile pictures.
 
-## Screenshots
-
-![Register Screen](screenshots/register.jpeg)
-![Login Screen](screenshots/login.jpeg)
-![HelloMich Screen](screenshots/helloMichTest.mp4)
-![Profile Screen](screenshots/oldessions.jpeg)
-![Settings Screen](screenshots/settings.jpeg)
-
 ## Installation
 
 1. Clone the repository:
