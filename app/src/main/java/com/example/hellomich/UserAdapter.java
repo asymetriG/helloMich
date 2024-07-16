@@ -58,7 +58,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
                             intent.putExtra("isActiveSession", true);
                             intent.putExtra("senderEmail", session.getSenderEmail());
                             intent.putExtra("receiverEmail", session.getReceiverEmail());
-
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             holder.itemView.getContext().startActivity(intent);
                         }
                     });
@@ -79,7 +79,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserHolder> {
                         intent.putExtra("isActiveSession", false);
                         intent.putExtra("senderEmail", user.getEmail());
                         intent.putExtra("receiverEmail", users.get(position).getEmail());
-
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         holder.itemView.getContext().startActivity(intent);
                     }
                 });

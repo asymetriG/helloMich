@@ -1,6 +1,7 @@
 package com.example.hellomich;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +14,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.hellomich.databinding.FragmentProfileBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -27,6 +31,7 @@ public class ProfileFragment extends Fragment {
 
     private FragmentProfileBinding binding;
     private SessionAdapter sessionAdapter;
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
     private final ArrayList<Session> sessions = new ArrayList<>();
 
@@ -43,7 +48,7 @@ public class ProfileFragment extends Fragment {
         User.getCurrentUser(new User.OnUserFetchedListener() {
             @Override
             public void onUserFetched(User user) {
-                firebaseFirestore.collection("sessions")
+                firebaseFirestore.collection("oldSessions")
                         .whereEqualTo("isActive",false)
                         .where(Filter.or(Filter.equalTo("senderEmail", user.getEmail()), Filter.equalTo("receiverEmail", user.getEmail())))
                         .get()
@@ -86,6 +91,44 @@ public class ProfileFragment extends Fragment {
                 binding.sessionRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 sessionAdapter = new SessionAdapter(sessions);
                 binding.sessionRecyclerView.setAdapter(sessionAdapter);
+
+                binding.deleteAccountButton.setBackgroundColor(Color.RED);
+                binding.deleteAccountButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        User.getCurrentUser(new User.OnUserFetchedListener() {
+                            @Override
+                            public void onUserFetched(User user) {
+
+                                firebaseFirestore.collection("users").document(user.getId()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()) {
+                                            Toast.makeText(getContext(),"User Deleted",Toast.LENGTH_SHORT).show();
+                                            firebaseAuth.getCurrentUser().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task2) {
+                                                    if(task2.isSuccessful()) {
+                                                        Intent intent = new Intent(getContext(),MainActivity.class);
+                                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                        startActivity(intent);
+                                                    } else {
+                                                        Toast.makeText(getContext(),"Not Redirecting",Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(getContext(),task2.getException() + "",Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+
+                                        } else {
+                                            Toast.makeText(getContext(),"User Could Not Deleted From Collections",Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
 
                 binding.logoutButton.setOnClickListener(v -> {
                     try {

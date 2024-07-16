@@ -85,7 +85,12 @@ public class User {
 
     public void logout() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuth.signOut();
+        try {
+            firebaseAuth.signOut();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 

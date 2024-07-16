@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
+import android.window.OnBackInvokedDispatcher;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -28,6 +29,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.hellomich.databinding.ActivityMapsBinding;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentReference;
@@ -91,7 +93,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
 
-        Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         if (location == null) {
             return;
@@ -127,21 +129,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         if (ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                             return;
                         }
-                        Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
                         Map<String,Object> data = new HashMap<>();
+
+                        Location newLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                         data.put("senderEmail", senderEmail);
                         data.put("receiverEmail", receiverEmail);
                         data.put("createdAt", FieldValue.serverTimestamp());
                         data.put("isActive", true);
-                        data.put("senderLang", location.getLatitude());
+                        data.put("senderLang", newLocation.getLatitude());
                         data.put("receiverLang", 0.0);
-                        data.put("senderLong", location.getLongitude());
+                        data.put("senderLong", newLocation.getLongitude());
                         data.put("receiverLong", 0.0);
                         String docName = senderEmail + "-" + receiverEmail;
 
-                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                        LatLng latLng = new LatLng(newLocation.getLatitude(), newLocation.getLongitude());
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
                         mMap.addMarker(new MarkerOptions().position(latLng).title(senderEmail + ", " + getCityName(latLng.latitude, latLng.longitude)));
 
@@ -160,9 +163,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     }
 
-
-
                 } else {
+
                     firebaseFirestore.collection("sessions").document(senderEmail+"-"+receiverEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -191,10 +193,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng2));
                             mMap.addMarker(new MarkerOptions().position(latLng2).title(senderEmail + ", " + getCityName(latLng2.latitude, latLng2.longitude)));
 
+
                             firebaseFirestore.collection("sessions").document(senderEmail+"-"+receiverEmail).set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
-                                    Toast.makeText(MapsActivity.this,"Session Stopped",Toast.LENGTH_SHORT).show();
+                                    firebaseFirestore.collection("oldSessions").add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                        @Override
+                                        public void onSuccess(DocumentReference documentReference) {
+                                           Toast.makeText(MapsActivity.this,"Session Stopped",Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(MapsActivity.this,"Failure",Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -205,6 +218,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(MapsActivity.this,MainPageActivity.class);
+
+        startActivity(intent);
+        finish();
     }
 
     @SuppressLint("SetTextI18n")
